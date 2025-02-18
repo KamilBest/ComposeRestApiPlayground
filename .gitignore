@@ -1,0 +1,117 @@
+# Ignore IntelliJ IDEA & Android Studio specific files
+*.iml
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/gradle.xml
+.idea/**/libraries/
+.idea/kotlin-language-metadata.xml
+.idea/shelf/
+
+# Ignore local configuration files
+/local.properties
+/.DS_Store
+
+# Ignore Gradle files
+.gradle/
+build/
+captures/
+outputs/
+intermediates/
+transforms/
+.externalNativeBuild/
+.cxx/
+
+# Ignore generated ProGuard & Dex files
+*.class
+*.dex
+*.apk
+*.ap_
+*.aab
+*.jar
+
+# Ignore Android Build System (AGP) outputs
+*.so
+*.o
+*.obj
+*.war
+*.ear
+
+# Ignore Kotlin & Java build files
+*.kotlin_metadata
+*.kotlin_builtins
+*.kotlin_module
+*.kotlin_cache
+*.kt-ast
+*.kt-ast-declarations
+
+# Ignore virtual machine crash logs
+hs_err_pid*
+
+# Ignore debug/release key stores
+*.jks
+*.keystore
+*.key
+*.pem
+
+# Ignore Gradle Wrapper files
+gradle/wrapper/gradle-wrapper.properties
+gradle/wrapper/gradle-wrapper.jar
+
+# Ignore test reports
+test-results/
+test-output/
+
+# Ignore logs & temporary files
+logs/
+*.log
+*.tmp
+*.swp
+*.lock
+*.bin
+
+# Ignore generated dependency resolution files
+dependency-reduced-pom.xml
+*.versionsBackup
+.gradle/config/
+
+# Ignore Firebase & Google Services
+google-services.json
+app/google-services.json
+firebase/
+crashlytics/
+
+# Ignore JetBrains shared indexes
+.idea/modules.xml
+.idea/codeStyles/
+.idea/caches/
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Ignore NDK-related files
+obj/
+libs/
+
+# Ignore CI/CD config files (if used)
+fastlane/report.xml
+fastlane/metadata/
+fastlane/screenshots/
+fastlane/test_output/
+
+# Ignore coverage reports
+*.ec
+coverage/
+jacoco/
+
+# Ignore lint & build artifacts
+lint/
+lint/intermediates/
+lint/reports/
+lint-results.xml
+reports/
+
+# Ignore node_modules if using React Native or JS dependencies
+node_modules/
+yarn.lock
+package-lock.json

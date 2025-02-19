@@ -1,31 +1,27 @@
 package com.best.composeRestApiPlayground.ui.screen.search
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.ui.unit.Dp
-import com.best.composeRestApiPlayground.usecase.search.PhotoModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.best.composeRestApiPlayground.usecase.search.data.PostModel
 
 @Composable
-fun SearchScreen() {
-    var query by remember { mutableStateOf("") }
-    val results = remember { sampleData }
-    val filteredResults = results.filter { it.title.contains(query, ignoreCase = true) }
+fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
+    val query by viewModel.queryFlow.collectAsState()
 
     Scaffold(
-        topBar = {
-            SearchTopBar()
-        },
+        topBar = { SearchTopBar() },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
@@ -34,18 +30,26 @@ fun SearchScreen() {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            SearchBar(query, onQueryChanged = { query = it })
+            SearchBar(
+                query = query,
+                onQueryChanged = { viewModel.onEvent(SearchUiEvent.OnQueryChange(it)) }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn {
-                items(filteredResults) { result ->
-                    SearchResultItem(result)
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else {
+                LazyColumn {
+                    items(uiState.results) { result ->
+                        SearchResultItem(result)
+                    }
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,39 +74,15 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit) {
 }
 
 @Composable
-fun SearchResultItem(result: PhotoModel) {
+fun SearchResultItem(postUiModel: PostUiModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "ID: ${result.id}", style = MaterialTheme.typography.titleMedium)
-            Text(text = result.title, style = MaterialTheme.typography.bodyLarge)
+            Text(text = postUiModel.title, style = MaterialTheme.typography.titleMedium)
+            Text(text = postUiModel.body, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
-
-val sampleData = listOf(
-    PhotoModel(
-        1,
-        1,
-        "Lorem Ipsum",
-        "https://via.placeholder.com/600/92c952",
-        "https://via.placeholder.com/150/92c952"
-    ),
-    PhotoModel(
-        1,
-        2,
-        "Dolor Sit Amet",
-        "https://via.placeholder.com/600/771796",
-        "https://via.placeholder.com/150/771796"
-    ),
-    PhotoModel(
-        1,
-        4,
-        "culpa odio esse rerum omnis laboriosam voluptate repudiandae",
-        "https://via.placeholder.com/600/d32776",
-        "https://via.placeholder.com/150/d32776"
-    )
-)

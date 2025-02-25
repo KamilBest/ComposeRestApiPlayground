@@ -18,7 +18,6 @@ import com.best.composeRestApiPlayground.usecase.search.data.PostModel
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val query by viewModel.queryFlow.collectAsState()
 
     Scaffold(
         topBar = { SearchTopBar() },
@@ -31,7 +30,7 @@ fun SearchScreen(viewModel: SearchViewModel = hiltViewModel()) {
                 .padding(16.dp)
         ) {
             SearchBar(
-                query = query,
+                query = uiState.query,
                 onQueryChanged = { viewModel.onEvent(SearchUiEvent.OnQueryChange(it)) }
             )
 

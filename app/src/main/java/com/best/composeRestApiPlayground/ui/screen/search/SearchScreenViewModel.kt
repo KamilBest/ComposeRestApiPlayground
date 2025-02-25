@@ -13,9 +13,6 @@ class SearchViewModel @Inject constructor(
     private val searchPostsUseCase: SearchPostsUseCase
 ) : ViewModel() {
 
-    var queryFlow: MutableStateFlow<String> = MutableStateFlow("")
-        private set
-
     var uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
         private set
 
@@ -27,14 +24,15 @@ class SearchViewModel @Inject constructor(
     fun onEvent(event: SearchUiEvent) {
         when (event) {
             is SearchUiEvent.OnQueryChange -> {
-                queryFlow.value = event.query
+                uiState.update { it.copy(query = event.query) }
             }
         }
     }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun observeQueryChanges() {
-        queryFlow
+        uiState
+            .map { it.query }
             .debounce(500)
             .distinctUntilChanged()
             .filter { it.isNotBlank() }

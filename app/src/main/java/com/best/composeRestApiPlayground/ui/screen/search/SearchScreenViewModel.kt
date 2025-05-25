@@ -4,8 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.best.composeRestApiPlayground.usecase.search.SearchPostsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +26,6 @@ class SearchViewModel @Inject constructor(
 
     var uiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
         private set
-
 
     init {
         observeQueryChanges()
@@ -35,12 +45,19 @@ class SearchViewModel @Inject constructor(
             .map { it.query }
             .debounce(500)
             .distinctUntilChanged()
+            .onEach { query ->
+                if (query.isBlank()) {
+                    uiState.update {
+                        it.copy(results = emptyList(), isLoading = false)
+                    }
+                }
+            }
             .filter { it.isNotBlank() }
             .flatMapLatest { query ->
                 flow {
                     uiState.update { it.copy(isLoading = true) }
                     val results = searchPostsUseCase(query)
-                    emit(results.map{it.toUiModel()})
+                    emit(results.map { it.toUiModel(query) })
                 }
             }
             .catch { e -> e.printStackTrace() }

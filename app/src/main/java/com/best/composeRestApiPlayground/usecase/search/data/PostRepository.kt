@@ -10,6 +10,6 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: PostApiService
 ): PostRepository {
     override suspend fun searchPosts(query: String): List<PostModel> {
-        return apiService.searchPosts(query)
+        return apiService.searchPostsByTitle(query)
     }
 }

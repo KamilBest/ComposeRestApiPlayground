@@ -35,6 +35,9 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchUiEvent.OnQueryChange -> {
                 uiState.update { it.copy(query = event.query) }
+                if (event.query.isBlank()) {
+                    uiState.update { it.copy(results = emptyList(), isLoading = false) }
+                }
             }
         }
     }
@@ -43,29 +46,27 @@ class SearchViewModel @Inject constructor(
     private fun observeQueryChanges() {
         uiState
             .map { it.query }
-            .debounce(500)
+            .debounce(DEBOUNCE_MILLIS)
             .distinctUntilChanged()
-            .onEach { query ->
-                if (query.isBlank()) {
-                    uiState.update {
-                        it.copy(results = emptyList(), isLoading = false)
-                    }
-                }
-            }
             .filter { it.isNotBlank() }
+            .onEach { query ->
+                uiState.update { it.copy(isLoading = true) }
+            }
             .flatMapLatest { query ->
                 flow {
-                    uiState.update { it.copy(isLoading = true) }
                     val results = searchPostsUseCase(query)
                     emit(results.map { it.toUiModel(query) })
+                }.catch {
+                    uiState.update { it.copy(results = emptyList(), isLoading = false) }
                 }
             }
-            .catch { e -> e.printStackTrace() }
-            .onEach { uiModelsResults ->
-                uiState.update {
-                    it.copy(results = uiModelsResults, isLoading = false)
-                }
+            .onEach { results ->
+                uiState.update { it.copy(results = results, isLoading = false) }
             }
             .launchIn(viewModelScope)
+    }
+
+    companion object {
+        private const val DEBOUNCE_MILLIS = 500L
     }
 }

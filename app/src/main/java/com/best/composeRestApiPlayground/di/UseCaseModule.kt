@@ -1,5 +1,8 @@
 package com.best.composeRestApiPlayground.di
 
+import com.best.composeRestApiPlayground.usecase.async.AsyncRequestsUseCase
+import com.best.composeRestApiPlayground.usecase.async.AsyncRequestsUseCaseImpl
+import com.best.composeRestApiPlayground.usecase.async.data.AsyncRepository
 import com.best.composeRestApiPlayground.usecase.search.SearchPostsUseCase
 import com.best.composeRestApiPlayground.usecase.search.SearchPostsUseCaseImpl
 import com.best.composeRestApiPlayground.usecase.search.data.PostRepository
@@ -17,5 +20,11 @@ object UseCaseModule {
     @Singleton
     fun provideSearchPostsUseCase(repository: PostRepository): SearchPostsUseCase {
         return SearchPostsUseCaseImpl(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAsyncRequestsUseCase(repository: AsyncRepository): AsyncRequestsUseCase {
+        return AsyncRequestsUseCaseImpl(repository)
     }
 }

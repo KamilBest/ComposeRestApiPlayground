@@ -7,6 +7,8 @@ and concurrent data handling using Jetpack Compose.
 
 ### 1. Search API Integration
 
+![Search Use Case Demo](search_usecase.gif)
+
 - Real-time search with debouncing
 - Query highlighting in search results
 - Loading state handling
@@ -14,6 +16,8 @@ and concurrent data handling using Jetpack Compose.
 - Clean architecture implementation
 
 ### 2. Concurrent API Calls
+
+![Concurrent API Calls Demo](async_requests_usecase.gif)
 
 - Multiple simultaneous API requests
 - Parallel data processing
